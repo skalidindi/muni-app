@@ -5,6 +5,7 @@ import { Http, Response } from '@angular/http';
 import { SfmapService } from '../sfmap/sfmap.service';
 
 import 'rxjs/Rx';
+import 'rxjs/add/observable/forkJoin';
 
 @Injectable()
 export class NextBusService {
@@ -27,10 +28,7 @@ export class NextBusService {
       return this.routeCache[routeId];
     } else {
       return this.http.get(this.buildCommandUrl('routeConfig', [this.AGENCY, 'r=' + routeId]))
-        .map((data: any) => data.json())
-        .subscribe((data: any) => {
-          this.routeCache[routeId] = data.route;
-        });
+        .map((data: any) => data.json());
     }
   }
 
@@ -44,11 +42,10 @@ export class NextBusService {
       .startWith(0)
       .switchMap(() => this.http.get(this.buildCommandUrl('vehicleLocations',
         [this.AGENCY, 't=' + this.time])))
-      .map((data) => data.json())
+      .map((res: Response) => res.json())
       .subscribe((data: any) => {
         this.time = data.lastTime.time;
         data.vehicle.forEach(vehicle => {
-          const routeInfo = this.getRouteInfo(vehicle.routeTag);
           const props = {
             dirTag: vehicle.dirTag,
             heading: vehicle.heading,
@@ -57,12 +54,21 @@ export class NextBusService {
             routeTag: vehicle.routeTag,
             secsSinceReport: vehicle.secsSinceReport,
             speedKmHr: vehicle.speedKmHr,
-            routeInfo
+            routeInfo: {}
           };
           const coords = [vehicle.lon, vehicle.lat];
           const feature = this.buildGeoFeature('Point', coords, props);
-
-          this.sfMapService.plotVehicle(feature);
+          const routeInfo = this.getRouteInfo(vehicle.routeTag);
+          if (routeInfo.toPromise) {
+            routeInfo.toPromise().then((routeConfig: any) => {
+              this.routeCache[vehicle.routeTag] = routeConfig.route;
+              props.routeInfo = routeConfig.route;
+              this.sfMapService.plotVehicle(feature);
+            });
+          } else {
+            props.routeInfo = routeInfo;
+            this.sfMapService.plotVehicle(feature);
+          }
         });
       });
   }
