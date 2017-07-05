@@ -9,7 +9,7 @@ import 'rxjs/Rx';
 @Injectable()
 export class NextBusService {
 
-  BASE_URL = 'http://webservices.nextbus.com/service/publicJSONFeed?command=';
+  BASE_URL = '//webservices.nextbus.com/service/publicJSONFeed?command=';
   AGENCY = 'a=sf-muni';
 
   routeCache = {};
