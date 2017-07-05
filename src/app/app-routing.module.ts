@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { SfmapComponent } from './sfmap/sfmap.component'
 
 const routes: Routes = [
   {
     path: '',
-    children: []
+    component: SfmapComponent
   }
 ];
 

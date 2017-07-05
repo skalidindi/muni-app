@@ -1,0 +1,29 @@
+<div class="row">
+  <div class="col-md-8">
+    <div id="map" class="center-block">
+    </div>
+  </div>
+  <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          Watched Routes
+        </div>
+        <div class="card-block">
+          <ul class="list-group">
+            <li class="list-group-item" *ngFor="let route of watchedRoutes">
+              {{route.title}}
+              <button type="button" class="close" aria-label="Close" (click)="onRemoveWatchedRoute(route)">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <select name="route-selectbox" class="form-control center-block route-selectbox"
+              (ngModelChange)="onRouteSelect($event)"
+              [(ngModel)]="selectedRoute">
+          <option value="" selected disabled>Select a route to watch</option>
+          <option *ngFor="let route of routes$ | async" [ngValue]="route">{{route.title}}</option>
+      </select>
+  </div>
+</div>

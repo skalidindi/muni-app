@@ -1,0 +1,22 @@
+.card {
+  border-color: #428bca;
+
+  .card-header {
+    color: #fff;
+    background-color: #428bca;
+  }
+
+  .card-block {
+    ul {
+      display: flex;
+      li {
+        justify-content: space-between;
+      }
+    }
+  }
+}
+
+.route-selectbox {
+  margin-top: 10px;
+}
+
