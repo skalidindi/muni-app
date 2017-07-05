@@ -41,8 +41,6 @@ export class SfmapComponent implements OnInit {
   }
 
   onRouteSelect(route) {
-    console.log(route);
-    // this.selectedRoute = null;
     this.updateSubject.next({ op: 'delete', route });
     this.watchedRoutes.push(route)
   }

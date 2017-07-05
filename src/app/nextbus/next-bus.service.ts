@@ -15,6 +15,7 @@ export class NextBusService {
 
   routeCache = {};
   time = 0;
+  count = 0;
 
   constructor(private http: Http, private sfMapService: SfmapService) {
   }
@@ -27,8 +28,9 @@ export class NextBusService {
     if (this.routeCache[routeId]) {
       return this.routeCache[routeId];
     } else {
-      return this.http.get(this.buildCommandUrl('routeConfig', [this.AGENCY, 'r=' + routeId]))
+      this.routeCache[routeId] = this.http.get(this.buildCommandUrl('routeConfig', [this.AGENCY, 'r=' + routeId]))
         .map((data: any) => data.json());
+      return this.routeCache[routeId];
     }
   }
 
@@ -59,12 +61,21 @@ export class NextBusService {
           const coords = [vehicle.lon, vehicle.lat];
           const feature = this.buildGeoFeature('Point', coords, props);
           const routeInfo = this.getRouteInfo(vehicle.routeTag);
-          if (routeInfo.toPromise) {
-            routeInfo.toPromise().then((routeConfig: any) => {
-              this.routeCache[vehicle.routeTag] = routeConfig.route;
-              props.routeInfo = routeConfig.route;
-              this.sfMapService.plotVehicle(feature);
-            });
+          if (routeInfo instanceof Observable) {
+            routeInfo
+              .subscribe(
+              (routeConfig: any) => {
+                // If server throws error that API has been called too much
+                if (!routeConfig.route) {
+                  this.routeCache[vehicle.routeTag] = {};
+                  this.sfMapService.plotVehicle(feature);
+                } else {
+                  this.routeCache[vehicle.routeTag] = routeConfig.route;
+                  props.routeInfo = routeConfig.route;
+                  this.sfMapService.plotVehicle(feature);
+                }
+              }
+              );
           } else {
             props.routeInfo = routeInfo;
             this.sfMapService.plotVehicle(feature);

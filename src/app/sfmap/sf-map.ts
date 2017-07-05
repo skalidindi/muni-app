@@ -78,7 +78,9 @@ export class SFMap {
         .append('path')
         .attr('class', 'muni')
         .attr('d', this.geoPath)
-        .style('fill', function (d) { return d.properties.routeInfo.color })
+        .style('fill', function (d) {
+          return d.properties.routeInfo.color;
+        })
         .attr('data-id', function (d) {
           return d.id;
         })
@@ -88,7 +90,9 @@ export class SFMap {
     } else {
       vehicle
         .data([feature])
-        .style('fill', function (d) { return '#' + d.properties.routeInfo.color })
+        .style('fill', function (d) {
+          return d.properties.routeInfo.color;
+        })
         .transition('moveVehicle')
         .duration(5000)
         .attr('d', this.geoPath);
