@@ -67,7 +67,7 @@ export class NextBusService {
               (routeConfig: any) => {
                 // If server throws error that API has been called too much
                 if (!routeConfig.route) {
-                  this.routeCache[vehicle.routeTag] = {};
+                  this.routeCache[vehicle.routeTag] = this.getRouteInfo(vehicle.routeTag);
                   this.sfMapService.plotVehicle(feature);
                 } else {
                   this.routeCache[vehicle.routeTag] = routeConfig.route;
