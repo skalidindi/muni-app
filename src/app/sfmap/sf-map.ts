@@ -11,12 +11,12 @@ export class SFMap {
   constructor(width: number = 600, height: number = 600, locator: string, boundingFeature: any) {
     const LIGHT_BLUE = '#a7cdf2';
 
-    const projection = d3.geo.mercator()
+    const projection = d3.geoMercator()
       .scale(1)
       .translate([0, 0])
       .precision(0);
 
-    this.geoPath = d3.geo.path()
+    this.geoPath = d3.geoPath()
       .projection(projection);
 
     const bounds = this.geoPath.bounds(boundingFeature);
